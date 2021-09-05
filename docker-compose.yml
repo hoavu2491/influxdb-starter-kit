@@ -3,7 +3,6 @@ services:
   influxdb:
     image: influxdb:2.0.8
     volumes:
-      # Mount for influxdb data directory and configuration
       - ./influxdbv2:/var/lib/influxdb2:rw
     ports:
       - "8086:8086"
@@ -14,5 +13,18 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=myorg
       - DOCKER_INFLUXDB_INIT_BUCKET=mybucket
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=mytoken
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
 volumes:
   influxdbv2:
+  grafana-storage:
